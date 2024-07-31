@@ -15,7 +15,7 @@ class RouteServiceProvider extends ServiceProvider
      * @var string
      */
     protected $namespace = 'App\Http\Controllers';
-
+    protected $dashboard_namespace='App\Http\Controllers\Dashboard';
     /**
      * The path to the "home" route for your application.
      *
@@ -45,6 +45,9 @@ class RouteServiceProvider extends ServiceProvider
         $this->mapApiRoutes();
 
         $this->mapWebRoutes();
+        
+        $this->mapDashboardRoutes();
+
 
         //
     }
@@ -56,6 +59,13 @@ class RouteServiceProvider extends ServiceProvider
      *
      * @return void
      */
+    protected function mapDashboardRoutes()
+    {
+        Route::middleware('web')
+             ->namespace($this->dashboard_namespace)
+             ->group(base_path('routes/dashboard/web.php'));
+    }
+
     protected function mapWebRoutes()
     {
         Route::middleware('web')
