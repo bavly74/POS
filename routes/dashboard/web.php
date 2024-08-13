@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Dashboard\DashboardController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Dashboard\UserController;
 
 
 Route::group(
@@ -11,6 +12,10 @@ Route::group(
     ], function(){
         Route::prefix('dashboard')->name('dashboard.')->group(function(){
             Route::get('/',[DashboardController::class,'index'])->name('index');
+            Route::get('/users', [UserController::class,'index'])->name('users');
+            Route::get('/users/edit/{id}', [UserController::class,'edit'])->name('users.delete');
+            Route::post('/users/delete/{id}', [UserController::class,'destroy'])->name('users.delete');
+
         });
     });
 

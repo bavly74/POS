@@ -15,7 +15,8 @@ class UserController extends Controller
      */
     public function index()
     {
-        return'ok';
+        $users=User::all();
+        return view('dashboard.users.index',compact('users'));
     }
 
     /**
@@ -79,8 +80,8 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request,$id)
     {
-        //
+        return $request;
     }
 }
