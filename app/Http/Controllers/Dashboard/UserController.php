@@ -26,7 +26,7 @@ class UserController extends Controller
      */
     public function create()
     {
-        //
+        return view('dashboard.users.create');
     }
 
     /**
@@ -37,7 +37,28 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'first_name'=>'required',
+            'last_name'=>'required',
+            'email'=>'required|email',
+            'password'=>'required|confirmed'
+        ]);
+
+        try{
+            $user=User::create([
+                'first_name'=>$request->first_name,
+                'last_name'=>$request->last_name,
+                'email'=>$request->email,
+                'password'=>bcrypt($request->password)
+            ]);
+        }catch(\Exception $e){
+
+            request()->session()->flash('unsuccessMessage', $e->getMessage());
+            return redirect()->back();
+        }
+
+
+        return redirect()->back()->with('success','The user added successfully');
     }
 
     /**
