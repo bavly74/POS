@@ -1,13 +1,17 @@
 <?php
 
 namespace App;
+use Laratrust\Traits\LaratrustUserTrait;
 
+use App\Models\Role;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
+    use LaratrustUserTrait; // add this trait to your user model
+
     use Notifiable;
 
     /**
@@ -36,4 +40,8 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+    public function roles()  {
+
+        return $this->belongsToMany(Role::class);
+    }
 }

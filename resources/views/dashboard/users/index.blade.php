@@ -71,13 +71,16 @@
 
                                             <a href="{{ route('dashboard.users.edit' , $user->id ) }}" class="btn btn-info btn-sm"><i class="fa fa-edit"></i> @lang('site.edit')</a>
 
+                                            @if(auth()->user()->hasPermission('users_delete'))
 
                                             <form action="{{ route('dashboard.users.delete' , $user->id ) }}" method="post" style="display: inline-block">
                                                 {{ csrf_field() }}
 
                                                 <button type="submit" class="btn btn-danger delete btn-sm"><i class="fa fa-trash"></i> @lang('site.delete')</button>
                                             </form><!-- end of form -->
-
+                                            @else
+                                            no
+                                            @endif
                                     </td>
                                 </tr>
 

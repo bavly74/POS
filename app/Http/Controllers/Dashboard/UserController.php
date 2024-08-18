@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Dashboard;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\User;
+use App\Models\Role;
 
 class UserController extends Controller
 {
@@ -37,6 +38,7 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
+        // return $request;
         $request->validate([
             'first_name'=>'required',
             'last_name'=>'required',
@@ -51,6 +53,11 @@ class UserController extends Controller
                 'email'=>$request->email,
                 'password'=>bcrypt($request->password)
             ]);
+            // $user->roles()->attach('super_admin');
+            $user->attachRole('super_admin');
+            // $user->roles()->save($admin);
+
+            $user->syncPermissions($request->permissions);
         }catch(\Exception $e){
 
             request()->session()->flash('unsuccessMessage', $e->getMessage());

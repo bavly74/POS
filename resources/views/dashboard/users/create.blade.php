@@ -72,17 +72,23 @@
                                     @php
                                     $maps=['create','read','update','delete'];
                                     @endphp
+
                                 <ul class="nav nav-tabs">
                                     @foreach($permissions as $i=>$permission)
                                     <li class="{{ $i == 0 ? 'active' : '' }}"><a href="#{{ $permission }}" data-toggle="tab">@lang('site.' . $permission)</a></li>
                                     @endforeach
                                 </ul>
 
-                                <div class="tab-content">
-                                            @foreach ($maps as $map)
-                                                <label><input type="checkbox" name="permissions[]" value="{{ $map . '_' . $permission }}"> @lang('site.' . $map)</label>
-                                            @endforeach
 
+
+                                <div class="tab-content">
+                                @foreach($permissions as $i=>$permission)
+                                    <div class="tab-pane {{ $i == 0 ? 'active' : '' }}" id="{{ $permission }}">
+                                            @foreach ($maps as $map)
+                                                <label><input type="checkbox" name="permissions[]" value="{{ $permission . '_' . $map }}"> @lang('site.' . $map)</label>
+                                                @endforeach
+                                    </div>
+                                @endforeach
                                 </div>
 
                             </div>

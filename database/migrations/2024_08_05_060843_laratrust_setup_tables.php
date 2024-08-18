@@ -36,8 +36,7 @@ class LaratrustSetupTables extends Migration
             $table->unsignedBigInteger('role_id');
             // $table->unsignedBigInteger('user_id');
             $table->foreignId('user_id')->references('id')->on('users');
-            $table->string('user_type');
-
+            $table->string('user_type')->default('default_type');
             $table->foreign('role_id')->references('id')->on('roles')
                 ->onUpdate('cascade')->onDelete('cascade');
 
