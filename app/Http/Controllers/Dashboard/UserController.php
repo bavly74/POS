@@ -64,26 +64,23 @@ class UserController extends Controller
         ]);
 
         try{
-//            if ($request->input('image')){
+            if ($request->image){
+                    $extension=$request->file('image')->getClientOriginalExtension();
 
-                $extension=$request->file('image')->getClientOriginalExtension();
+                    $fileNameToStore =Str::random().'_'.time().'.'.$extension;
 
-                $fileNameToStore=Str::random().'_'.time().'.'.$extension;
+                    $request->file('image')->move(public_path('uploads/users/'), $fileNameToStore);
 
-                $request->file('image')->move(public_uploads('uploads/users'). $fileNameToStore);
-//            }
-            $user=User::create([
-                'first_name'=>$request->first_name,
-                'last_name'=>$request->last_name,
-                'email'=>$request->email,
-                'password'=>bcrypt($request->password),
-                'image'=>$fileNameToStore
-            ]);
-            // $user->roles()->attach('super_admin');
-            $user->attachRole('admin');
-            // $user->roles()->save($admin);
-
-            $user->syncPermissions($request->permissions);
+                    $user=User::create([
+                        'first_name'=>$request->first_name,
+                        'last_name'=>$request->last_name,
+                        'email'=>$request->email,
+                        'password'=>bcrypt($request->password),
+                        'image'=>$fileNameToStore
+                    ]);
+                $user->attachRole('admin');
+                $user->syncPermissions($request->permissions);
+            }
         }catch(\Exception $e){
 
             request()->session()->flash('unsuccessMessage', $e->getMessage());
