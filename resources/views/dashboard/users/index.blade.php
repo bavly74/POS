@@ -33,7 +33,11 @@
                             <div class="col-md-4">
                                 <button type="submit" class="btn btn-primary"><i class="fa fa-search"></i> @lang('site.search')</button>
 
+                                @if(auth()->user()->hasPermission('users_create'))
                                     <a href="{{route('dashboard.users.create')}}" class="btn btn-primary"><i class="fa fa-plus"></i> @lang('site.add')</a>
+                                    @else
+                                    <a href="#" class="btn btn-primary"disabled><i class="fa fa-plus"></i> @lang('site.add')</a>
+                                    @endif
 
                             </div>
 
@@ -68,18 +72,21 @@
                                     <td>{{ $user->email }}</td>
                                     <td><img src="{{ $user->image_path }}" style="width: 100px;" class="img-thumbnail" alt=""></td>
                                     <td>
+                                            @if(Auth::User()->hasPermission('users_update'))
+                                                <a href="{{ route('dashboard.users.edit' , $user->id ) }}" class="btn btn-info btn-sm"><i class="fa fa-edit"></i> @lang('site.edit')</a>
+                                            @else
+                                            <a href="#" class="btn btn-info btn-sm" disabled><i class="fa fa-edit"></i> @lang('site.edit')</a>
+                                            @endif
 
-                                            <a href="{{ route('dashboard.users.edit' , $user->id ) }}" class="btn btn-info btn-sm"><i class="fa fa-edit"></i> @lang('site.edit')</a>
-
-                                            @if(auth()->user()->hasPermission('users_delete'))
-
+                                            @if(Auth::User()->hasPermission('users_delete'))
                                             <form action="{{ route('dashboard.users.delete' , $user->id ) }}" method="post" style="display: inline-block">
                                                 {{ csrf_field() }}
 
                                                 <button type="submit" class="btn btn-danger delete btn-sm"><i class="fa fa-trash"></i> @lang('site.delete')</button>
                                             </form><!-- end of form -->
                                             @else
-                                            no
+                                            <button type="submit" class="btn btn-danger delete btn-sm" disabled><i class="fa fa-trash"></i> @lang('site.delete')</button>
+
                                             @endif
                                     </td>
                                 </tr>
@@ -88,6 +95,7 @@
                             </tbody>
 
                         </table><!-- end of table -->
+                        {{$users->appends(request()->query())->links()}}
 
 
                     @else

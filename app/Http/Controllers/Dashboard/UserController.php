@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\User;
 use App\Models\Role;
+use Illuminate\Support\Str;
 
 class UserController extends Controller
 {
@@ -14,9 +15,26 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+
+    public function __construct(){
+
+        $this->middleware(['permission:users_read'])->only('index');
+        $this->middleware(['permission:users_create'])->only('create');
+        $this->middleware(['permission:users_update'])->only('edit');
+
+    }
+
+    public function index(Request $request)
     {
-        $users=User::all();
+        $users=User::whereRoleIs('admin')->when( $request->search , function($q) use ($request) {
+
+            return $q->where('first_name' , 'like' , '%'. $request->search . '%')
+                    ->orWhere('last_name' , 'like' , '%'. $request->search . '%');
+
+        })->latest()->paginate(5);
+
+
+
         return view('dashboard.users.index',compact('users'));
     }
 
@@ -38,7 +56,6 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        // return $request;
         $request->validate([
             'first_name'=>'required',
             'last_name'=>'required',
@@ -47,14 +64,23 @@ class UserController extends Controller
         ]);
 
         try{
+//            if ($request->input('image')){
+
+                $extension=$request->file('image')->getClientOriginalExtension();
+
+                $fileNameToStore=Str::random().'_'.time().'.'.$extension;
+
+                $request->file('image')->move(public_uploads('uploads/users'). $fileNameToStore);
+//            }
             $user=User::create([
                 'first_name'=>$request->first_name,
                 'last_name'=>$request->last_name,
                 'email'=>$request->email,
-                'password'=>bcrypt($request->password)
+                'password'=>bcrypt($request->password),
+                'image'=>$fileNameToStore
             ]);
             // $user->roles()->attach('super_admin');
-            $user->attachRole('super_admin');
+            $user->attachRole('admin');
             // $user->roles()->save($admin);
 
             $user->syncPermissions($request->permissions);
@@ -87,7 +113,8 @@ class UserController extends Controller
      */
     public function edit($id)
     {
-        //
+        $user=User::find($id);
+        return view('dashboard.users.edit',compact('user'));
     }
 
     /**
@@ -99,17 +126,45 @@ class UserController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $request->validate([
+            'first_name'=>'required',
+            'last_name'=>'required',
+            'email'=>'required|email',
+        ]);
+
+        try{
+        $user=User::find($id);
+        if($request->input('permissions')){
+            $user->syncPermissions($request->permissions);
+        }
+
+        $user->update([
+            'first_name'=>$request->first_name,
+            'last_name'=>$request->last_name,
+            'email'=>$request->email,
+            'password'=>bcrypt($request->password),
+        ]);
+
+        }catch(\Exception $e){
+            request()->session()->flash('unsuccessMessage', $e->getMessage());
+            return redirect()->back();
+        }
+
+        return redirect()->back()->with('success','The user added successfully');
     }
+
 
     /**
      * Remove the specified resource from storage.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function destroy(Request $request,$id)
     {
-        return $request;
+        User::find($id)->delete();
+        return redirect()->back()->with('success','The user deleted successfully');
+
     }
+
 }
