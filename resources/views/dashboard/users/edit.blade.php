@@ -47,15 +47,13 @@
                             <input type="email" name="email" class="form-control" value="{{ $user->email }}">
                         </div>
 
-
                         <div class="form-group">
-                            <label>@lang('site.password')</label>
-                            <input type="password" name="password" class="form-control">
+                            <label>@lang('site.image')</label>
+                            <input type="file" name="image" class="form-control">
                         </div>
 
                         <div class="form-group">
-                            <label>@lang('site.password_confirmation')</label>
-                            <input type="password" name="password_confirmation" class="form-control">
+                            <img src="{{ asset('uploads/users/'.$user->image) }}" style="width: 200px;height: 200px" class="form-control image-preview" alt="img">
                         </div>
 
 

@@ -52,6 +52,11 @@
                             <input type="file" name="image" class="form-control">
                         </div>
 
+                        <div class="form-group">
+                            <img src="{{ asset('uploads/users/default.jpg') }}" style="width: 200px;height: 200px" class="form-control image-preview" alt="img">
+                        </div>
+
+
 
                         <div class="form-group">
                             <label>@lang('site.password')</label>

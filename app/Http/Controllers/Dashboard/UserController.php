@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\User;
 use App\Models\Role;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class UserController extends Controller
@@ -60,10 +62,12 @@ class UserController extends Controller
             'first_name'=>'required',
             'last_name'=>'required',
             'email'=>'required|email',
-            'password'=>'required|confirmed'
+            'password'=>'required|confirmed',
+            'image'=>'required'
         ]);
 
         try{
+//            DB::beginTransaction();
             if ($request->image){
                     $extension=$request->file('image')->getClientOriginalExtension();
 
@@ -82,6 +86,7 @@ class UserController extends Controller
                 $user->syncPermissions($request->permissions);
             }
         }catch(\Exception $e){
+//            DB::rollBack();
 
             request()->session()->flash('unsuccessMessage', $e->getMessage());
             return redirect()->back();
@@ -129,25 +134,32 @@ class UserController extends Controller
             'email'=>'required|email',
         ]);
 
-        try{
-        $user=User::find($id);
-        if($request->input('permissions')){
-            $user->syncPermissions($request->permissions);
-        }
+        $requestedData=$request->except(['image']);
 
-        $user->update([
-            'first_name'=>$request->first_name,
-            'last_name'=>$request->last_name,
-            'email'=>$request->email,
-            'password'=>bcrypt($request->password),
-        ]);
+        try{
+            $user=User::find($id);
+            if($request->input('permissions')){
+                $user->syncPermissions($request->permissions);
+             }
+
+        if($request->image){
+
+            if ($user->image != 'default.jpg'){
+                storage::disk('public_uploads')->delete('users/'.$user->image);
+            }
+            $extension=$request->file('image')->getClientOriginalExtension();
+            $fileNameToStore =Str::random().'_'.time().'.'.$extension;
+            $request->file('image')->move(public_path('uploads/users/'), $fileNameToStore);
+            $requestedData['image']=$fileNameToStore;
+        }
+            $user->update($requestedData);
+            return redirect()->back()->with('success','The user added successfully');
 
         }catch(\Exception $e){
             request()->session()->flash('unsuccessMessage', $e->getMessage());
             return redirect()->back();
         }
 
-        return redirect()->back()->with('success','The user added successfully');
     }
 
 
@@ -159,7 +171,11 @@ class UserController extends Controller
      */
     public function destroy(Request $request,$id)
     {
-        User::find($id)->delete();
+       $user= User::find($id);
+       if ($user->image){
+           storage::disk('public_uploads')->delete('users/'.$user->image);
+       }
+        $user->delete();
         return redirect()->back()->with('success','The user deleted successfully');
 
     }
