@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\UserStore;
+use App\Http\Requests\UserUpdate;
 use Illuminate\Http\Request;
 use App\User;
 use App\Models\Role;
@@ -28,10 +30,12 @@ class UserController extends Controller
 
     public function index(Request $request)
     {
-        $users=User::whereRoleIs('admin')->when( $request->search , function($q) use ($request) {
+        $users=User::whereRoleIs('admin')->where(function ($query) use ($request) {
+                return $query ->when( $request->search , function($q) use ($request) {
 
-            return $q->where('first_name' , 'like' , '%'. $request->search . '%')
+                return $q->where('first_name' , 'like' , '%'. $request->search . '%')
                     ->orWhere('last_name' , 'like' , '%'. $request->search . '%');
+        });
 
         })->latest()->paginate(5);
 
@@ -56,15 +60,9 @@ class UserController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(UserStore $request)
     {
-        $request->validate([
-            'first_name'=>'required',
-            'last_name'=>'required',
-            'email'=>'required|email',
-            'password'=>'required|confirmed',
-            'image'=>'required'
-        ]);
+
 
         try{
 //            DB::beginTransaction();
@@ -126,13 +124,9 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(UserUpdate $request, $id)
     {
-        $request->validate([
-            'first_name'=>'required',
-            'last_name'=>'required',
-            'email'=>'required|email',
-        ]);
+
 
         $requestedData=$request->except(['image']);
 

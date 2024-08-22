@@ -6,11 +6,11 @@
 
         <section class="content-header">
 
-            <h1>@lang('site.users')</h1>
+            <h1>@lang('site.categories')</h1>
 
             <ol class="breadcrumb">
                 <li><a href="{{ route('dashboard.index') }}"><i class="fa fa-dashboard"></i> @lang('site.dashboard')</a></li>
-                <li class="active">@lang('site.users')</li>
+                <li class="active">@lang('site.categories')</li>
             </ol>
         </section>
 
@@ -20,9 +20,9 @@
 
                 <div class="box-header with-border">
 
-                    <h3 class="box-title" style="margin-bottom: 15px">@lang('site.users') <small>{{ $users->count() }}</small></h3>
+                    <h3 class="box-title" style="margin-bottom: 15px">@lang('site.categories') <small>{{ $categories->count() }}</small></h3>
 
-                    <form action="{{ route('dashboard.users.index') }}" method="get">
+                    <form action="{{ route('dashboard.categories.index') }}" method="get">
 
                         <div class="row">
 
@@ -33,8 +33,8 @@
                             <div class="col-md-4">
                                 <button type="submit" class="btn btn-primary"><i class="fa fa-search"></i> @lang('site.search')</button>
 
-                                @if(auth()->user()->hasPermission('users_create'))
-                                    <a href="{{route('dashboard.users.create')}}" class="btn btn-primary"><i class="fa fa-plus"></i> @lang('site.add')</a>
+                                @if(auth()->user()->hasPermission('categories_create'))
+                                    <a href="{{route('dashboard.categories.create')}}" class="btn btn-primary"><i class="fa fa-plus"></i> @lang('site.add')</a>
                                     @else
                                     <a href="#" class="btn btn-primary"disabled><i class="fa fa-plus"></i> @lang('site.add')</a>
                                     @endif
@@ -48,38 +48,33 @@
 
                 <div class="box-body">
 
-                    @if ($users->count() > 0)
+                    @if ($categories->count() > 0)
 
                         <table class="table table-hover">
 
                             <thead>
                             <tr>
                                 <th>#</th>
-                                <th>@lang('site.first_name')</th>
-                                <th>@lang('site.last_name')</th>
-                                <th>@lang('site.email')</th>
-                                <th>@lang('site.image')</th>
+                                <th>@lang('site.name')</th>
                                 <th>@lang('site.action')</th>
                             </tr>
                             </thead>
 
                             <tbody>
-                            @foreach ($users as $index=>$user)
+                            @foreach ($categories as $index=>$category)
                                 <tr>
                                     <td>{{ $index + 1 }}</td>
-                                    <td>{{ $user->first_name }}</td>
-                                    <td>{{ $user->last_name }}</td>
-                                    <td>{{ $user->email }}</td>
-                                    <td><img src="{{ asset('uploads/users/'.$user->image) }}" style="width: 100px;" class="img-thumbnail" alt=""></td>
+
+                                    <td>{{ $category->name }}</td>
                                     <td>
-                                            @if(Auth::User()->hasPermission('users_update'))
-                                                <a href="{{ route('dashboard.users.edit' , $user->id ) }}" class="btn btn-info btn-sm"><i class="fa fa-edit"></i> @lang('site.edit')</a>
+                                            @if(Auth::user()->hasPermission('categories_update'))
+                                                <a href="{{ route('dashboard.categories.edit' , $category->id ) }}" class="btn btn-info btn-sm"><i class="fa fa-edit"></i> @lang('site.edit')</a>
                                             @else
                                             <a href="#" class="btn btn-info btn-sm" disabled><i class="fa fa-edit"></i> @lang('site.edit')</a>
                                             @endif
 
-                                            @if(Auth::User()->hasPermission('users_delete'))
-                                            <form action="{{ route('dashboard.users.delete' , $user->id ) }}" method="post" style="display: inline-block">
+                                            @if(Auth::user()->hasPermission('categories_delete'))
+                                            <form action="{{ route('dashboard.categories.delete' , $category->id ) }}" method="post" style="display: inline-block">
                                                 {{ csrf_field() }}
 
                                                 <button type="submit" class="btn btn-danger delete btn-sm"><i class="fa fa-trash"></i> @lang('site.delete')</button>
@@ -95,7 +90,7 @@
                             </tbody>
 
                         </table><!-- end of table -->
-                        {{$users->appends(request()->query())->links()}}
+                        {{$categories->appends(request()->query())->links()}}
 
 
                     @else
