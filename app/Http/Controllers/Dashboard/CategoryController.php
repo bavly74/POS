@@ -50,9 +50,13 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'ar.name' => 'required|unique:categories,name',
-        ]);
+
+
+        $rules=[];
+        foreach (config('translatable.locales') as $locale) {
+            $rules+=[$locale . '.name' => 'required|unique:category_translations,name,'.$locale];
+        }
+        $request->validate($rules);
 
         Category::create($request->all());
         return redirect()->route('dashboard.categories.index')->with('success', 'Category created successfully');
@@ -91,10 +95,15 @@ class CategoryController extends Controller
      */
     public function update(Request $request,$id)
     {
-        $request->validate([
-            'name' => 'required|unique:categories,name',
-        ]);
-        Category::where('id',$id)->update(['name'=>$request->name]);
+        $rules=[];
+        foreach (config('translatable.locales') as $locale) {
+            $rules+=[$locale . '.name' => 'required|unique:category_translations,name,'.$locale];
+        }
+        $request->validate($rules);
+        $data = $request->except(['_token', '_method']);
+
+   return     Category::where('id',$id)->first();
+
         return redirect()->route('dashboard.categories.index')->with('success', 'Category updated successfully');
 
     }
