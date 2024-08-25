@@ -4,6 +4,7 @@ use App\Http\Controllers\Dashboard\DashboardController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Dashboard\UserController;
 use App\Http\Controllers\Dashboard\CategoryController;
+use App\Http\Controllers\Dashboard\ProductController;
 
 
 Route::group(
@@ -25,7 +26,8 @@ Route::group(
             });
             //end of users routes
 
-            //users routes
+
+            //categories routes
             Route::prefix('categories')->name('categories.')->group(function(){
                 Route::get('/', [CategoryController::class,'index'])->name('index');
                 Route::get('edit/{id}', [CategoryController::class,'edit'])->name('edit');
@@ -34,7 +36,19 @@ Route::group(
                 Route::post('store', [CategoryController::class,'store'])->name('store');
                 Route::post('update/{id}', [CategoryController::class,'update'])->name('update');
             });
-            //end of users routes
+            //end of categories routes
+
+
+            //categories routes
+            Route::prefix('products')->name('products.')->group(function(){
+                Route::get('/', [ProductController::class,'index'])->name('index');
+                Route::get('edit/{id}', [CategoryController::class,'edit'])->name('edit');
+                Route::get('create', [ProductController::class,'create'])->name('create');
+                Route::post('delete/{id}', [ProductController::class,'destroy'])->name('delete');
+                Route::post('store', [ProductController::class,'store'])->name('store');
+                Route::post('update/{id}', [ProductController::class,'update'])->name('update');
+            });
+            //end of categories routes
 
 
         });

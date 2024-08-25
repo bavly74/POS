@@ -95,16 +95,27 @@ class CategoryController extends Controller
      */
     public function update(Request $request,$id)
     {
-        $rules=[];
-        foreach (config('translatable.locales') as $locale) {
-            $rules+=[$locale . '.name' => 'required|unique:category_translations,name,'.$locale];
-        }
-        $request->validate($rules);
-        $data = $request->except(['_token', '_method']);
+        // Validate request
+                $rules = [];
+                foreach (config('translatable.locales') as $locale) {
+                    $rules[$locale . '.name'] = 'required|unique:category_translations,name,' . $id . ',category_id';
+                }
+                $request->validate($rules);
 
-   return     Category::where('id',$id)->first();
+        // Find the category by ID
+                $category = Category::findOrFail($id);
 
-        return redirect()->route('dashboard.categories.index')->with('success', 'Category updated successfully');
+        // Update translations for each locale
+                foreach (config('translatable.locales') as $locale) {
+                    $category->translateOrNew($locale)->name = $request->input($locale . '.name');
+                }
+
+        // Save the updated category
+                $category->save();
+
+        // Redirect with success message
+                return redirect()->route('dashboard.categories.index')->with('success', 'Category updated successfully');
+
 
     }
 
