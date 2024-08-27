@@ -32,7 +32,7 @@ Route::group(
             //products routes
             Route::prefix('products')->name('products.')->group(function(){
                 Route::get('/', [ProductController::class,'index'])->name('index');
-                Route::get('edit/{id}', [CategoryController::class,'edit'])->name('edit');
+                Route::get('edit/{id}', [ProductController::class,'edit'])->name('edit');
                 Route::get('create', [ProductController::class,'create'])->name('create');
                 Route::post('delete/{id}', [ProductController::class,'destroy'])->name('delete');
                 Route::post('store', [ProductController::class,'store'])->name('store');

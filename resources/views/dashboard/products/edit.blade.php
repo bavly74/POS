@@ -6,11 +6,11 @@
 
         <section class="content-header">
 
-            <h1>@lang('site.categories')</h1>
+            <h1>@lang('site.products')</h1>
 
             <ol class="breadcrumb">
                 <li><a href="{{ route('dashboard.index') }}"><i class="fa fa-dashboard"></i> @lang('site.dashboard')</a></li>
-                <li><a href="{{ route('dashboard.categories.index') }}"> @lang('site.categories')</a></li>
+                <li><a href="{{ route('dashboard.products.index') }}"> @lang('site.products')</a></li>
                 <li class="active">@lang('site.add')</li>
             </ol>
         </section>
@@ -27,19 +27,62 @@
 
                     @include('partials._errors')
 
-                    <form action="{{ route('dashboard.categories.update', $category->id) }}" method="post">
+                    <form action="{{ route('dashboard.products.update', $product->id) }}" method="post">
 
                         {{ csrf_field() }}
                         {{ method_field('post') }}
 
-                        @foreach (config('translatable.locales') as $locale)
+                        <div class="form-group">
+                            <label>@lang('site.product')</label>
 
+                            <select class="form-control" name="category_id">
+                                <option>@lang('site.product')</option>
+                                @foreach($categories as $category)
+                                    <option value="{{$category->id}}" {{$category->id==$product->category->id?"selected":""}}>{{$category->name}}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        @foreach (config('translatable.locales') as $locale)
                             <div class="form-group">
                                 <label>@lang('site.'.$locale.'.name')</label>
-                                <input type="text" name="{{$locale}}[name]" class="form-control" value="{{ $category->translate($locale)->name }}">
+                                <input type="text" name="{{$locale}}[name]" class="form-control" value="{{ $product->translate($locale)->name }}">
                             </div>
-
                         @endforeach
+
+                        @foreach (config('translatable.locales') as $locale)
+                            <div class="form-group">
+                                <label>@lang('site.'.$locale.'.description')</label>
+                                <textarea type="text" name="{{$locale}}[description]" class="form-control ckeditor" >{{ $product->translate($locale)->description }}</textarea>
+                            </div>
+                        @endforeach
+
+                        <div class="form-group">
+                            <label>@lang('site.image')</label>
+                            <input type="file" name="image" class="form-control">
+                        </div>
+
+                        <div class="form-group">
+                            <img src="{{ asset('uploads/products/'.$product->image) }}" style="width: 200px;height: 200px" class="form-control image-preview" alt="img">
+                        </div>
+
+
+                        <div class="form-group">
+                            <label>@lang('site.purchase_price')</label>
+                            <input type="number" name="purchase_price" class="form-control" value="{{$product->purchase_price}}">
+                        </div>
+
+
+                        <div class="form-group">
+                            <label>@lang('site.sale_price')</label>
+                            <input type="number" name="sale_price" class="form-control" value="{{$product->sale_price}}">
+                        </div>
+
+                        <div class="form-group">
+                            <label>@lang('site.stock')</label>
+                            <input type="number" name="stock" class="form-control" value="{{$product->stock}}">
+                        </div>
+
 
 
                         <div class="form-group">
