@@ -13,6 +13,7 @@ class User extends Authenticatable
     use LaratrustUserTrait; // add this trait to your user model
 
     use Notifiable;
+    protected $appends=['full_name','image_path'];
 
     /**
      * The attributes that are mass assignable.
@@ -43,5 +44,14 @@ class User extends Authenticatable
     public function roles()  {
 
         return $this->belongsToMany(Role::class);
+    }
+    public function getFullNameAttribute(){
+
+        return $this->first_name . " " . $this->last_name;
+
+    }
+
+    public function getImagePathAttribute(){
+        return asset('uploads/users/'.$this->image);
     }
 }

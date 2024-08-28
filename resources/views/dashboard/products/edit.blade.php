@@ -27,7 +27,7 @@
 
                     @include('partials._errors')
 
-                    <form action="{{ route('dashboard.products.update', $product->id) }}" method="post">
+                    <form action="{{ route('dashboard.products.update', $product->id) }}" method="post" enctype="multipart/form-data">
 
                         {{ csrf_field() }}
                         {{ method_field('post') }}

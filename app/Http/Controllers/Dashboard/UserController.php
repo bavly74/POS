@@ -137,7 +137,6 @@ class UserController extends Controller
              }
 
         if($request->image){
-
             if ($user->image != 'default.jpg'){
                 storage::disk('public_uploads')->delete('users/'.$user->image);
             }

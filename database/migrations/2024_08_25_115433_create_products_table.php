@@ -19,7 +19,7 @@ class CreateProductsTable extends Migration
             $table->double('purchase_price');
             $table->double('sale_price');
             $table->double('stock');
-            $table->string('image')->default('default.png');
+            $table->string('image')->default('default.jpg');
             $table->timestamps();
         });
     }
