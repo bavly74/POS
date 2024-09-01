@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Dashboard\UserController;
 use App\Http\Controllers\Dashboard\CategoryController;
 use App\Http\Controllers\Dashboard\ProductController;
+use App\Http\Controllers\Dashboard\ClientController;
 
 
 Route::group(
@@ -39,6 +40,18 @@ Route::group(
                 Route::post('update/{id}', [ProductController::class,'update'])->name('update');
             });
             //end of products routes
+
+
+            //clients routes
+            Route::prefix('clients')->name('clients.')->group(function(){
+                Route::get('/', [ClientController::class,'index'])->name('index');
+                Route::get('edit/{id}', [ClientController::class,'edit'])->name('edit');
+                Route::get('create', [ClientController::class,'create'])->name('create');
+                Route::post('delete/{id}', [ClientController::class,'destroy'])->name('delete');
+                Route::post('store', [ClientController::class,'store'])->name('store');
+                Route::post('update/{id}', [ClientController::class,'update'])->name('update');
+            });
+            //end of clients routes
 
 
             //users routes

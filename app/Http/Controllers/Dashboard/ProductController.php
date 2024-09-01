@@ -127,6 +127,7 @@ class ProductController extends Controller
 
 
     }
+
     public function destroy($id){
 
         $product=Product::find($id);
@@ -141,7 +142,4 @@ class ProductController extends Controller
         return redirect()->back()->with('success','The product deleted successfully');
 
     }
-
-
-
 }

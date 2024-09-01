@@ -74,7 +74,7 @@
                             <div class="nav-tabs-custom">
 
                                     @php
-                                    $permissions=['users','products','categories'];
+                                    $permissions=['users','products','categories','clients','orders'];
                                     @endphp
 
                                     @php

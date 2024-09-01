@@ -6,11 +6,11 @@
 
         <section class="content-header">
 
-            <h1>@lang('site.categories')</h1>
+            <h1>@lang('site.clients')</h1>
 
             <ol class="breadcrumb">
                 <li><a href="{{ route('dashboard.index') }}"><i class="fa fa-dashboard"></i> @lang('site.dashboard')</a></li>
-                <li class="active">@lang('site.categories')</li>
+                <li class="active">@lang('site.clients')</li>
             </ol>
         </section>
 
@@ -20,9 +20,9 @@
 
                 <div class="box-header with-border">
 
-                    <h3 class="box-title" style="margin-bottom: 15px">@lang('site.categories') <small>{{ $categories->count() }}</small></h3>
+                    <h3 class="box-title" style="margin-bottom: 15px">@lang('site.clients') <small>{{ $clients->count() }}</small></h3>
 
-                    <form action="{{ route('dashboard.categories.index') }}" method="get">
+                    <form action="{{ route('dashboard.clients.index') }}" method="get">
 
                         <div class="row">
 
@@ -33,10 +33,10 @@
                             <div class="col-md-4">
                                 <button type="submit" class="btn btn-primary"><i class="fa fa-search"></i> @lang('site.search')</button>
 
-                                @if(auth()->user()->hasPermission('categories_create'))
-                                    <a href="{{route('dashboard.categories.create')}}" class="btn btn-primary"><i class="fa fa-plus"></i> @lang('site.add')</a>
+                                @if(auth()->user()->hasPermission('clients_create'))
+                                    <a href="{{route('dashboard.clients.create')}}" class="btn btn-primary"><i class="fa fa-plus"></i> @lang('site.add')</a>
                                     @else
-                                    <a href="#" class="btn btn-primary"disabled><i class="fa fa-plus"></i> @lang('site.add')</a>
+                                    <a href="#" class="btn btn-primary" disabled><i class="fa fa-plus"></i> @lang('site.add')</a>
                                     @endif
 
                             </div>
@@ -48,7 +48,7 @@
 
                 <div class="box-body">
 
-                    @if ($categories->count() > 0)
+                    @if ($clients->count() > 0)
 
                         <table class="table table-hover">
 
@@ -56,28 +56,29 @@
                             <tr>
                                 <th>#</th>
                                 <th>@lang('site.name')</th>
-                                <th>@lang('site.products_count')</th>
-                                <th>@lang('site.related_products')</th>
+                                <th>@lang('site.phone')</th>
+                                <th>@lang('site.address')</th>
                                 <th>@lang('site.action')</th>
                             </tr>
                             </thead>
 
                             <tbody>
-                            @foreach ($categories as $index=>$category)
+                            @foreach ($clients as $index=>$client)
                                 <tr>
                                     <td>{{ $index + 1 }}</td>
-                                    <td>{{ $category->name }}</td>
-                                    <td>{{ $category->products->count() }}</td>
-                                    <td><a href="{{route('dashboard.products.index',['category_id'=>$category->id])}}"  class="btn btn-primary">@lang('site.related_products')</a> </td>
+                                    <td>{{ $client->name }}</td>
+                                    <td>{{ implode ('-', array_filter($client->phone)) }}</td>
+                                    <td>{{ implode ('-', array_filter($client->address)) }}</td>
+
                                     <td>
-                                            @if(Auth::user()->hasPermission('categories_update'))
-                                                <a href="{{ route('dashboard.categories.edit' , $category->id ) }}" class="btn btn-info btn-sm"><i class="fa fa-edit"></i> @lang('site.edit')</a>
+                                            @if(Auth::user()->hasPermission('clients_update'))
+                                                <a href="{{ route('dashboard.clients.edit' , $client->id ) }}" class="btn btn-info btn-sm"><i class="fa fa-edit"></i> @lang('site.edit')</a>
                                             @else
                                             <a href="#" class="btn btn-info btn-sm" disabled><i class="fa fa-edit"></i> @lang('site.edit')</a>
                                             @endif
 
-                                            @if(Auth::user()->hasPermission('categories_delete'))
-                                            <form action="{{ route('dashboard.categories.delete' , $category->id ) }}" method="post" style="display: inline-block">
+                                            @if(Auth::user()->hasPermission('clients_delete'))
+                                            <form action="{{ route('dashboard.clients.delete' , $client->id ) }}" method="post" style="display: inline-block">
                                                 {{ csrf_field() }}
 
                                                 <button type="submit" class="btn btn-danger delete btn-sm"><i class="fa fa-trash"></i> @lang('site.delete')</button>
@@ -93,7 +94,7 @@
                             </tbody>
 
                         </table><!-- end of table -->
-                        {{$categories->appends(request()->query())->links()}}
+                        {{$clients->appends(request()->query())->links()}}
 
 
                     @else
