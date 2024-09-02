@@ -6,6 +6,7 @@ use App\Http\Controllers\Dashboard\UserController;
 use App\Http\Controllers\Dashboard\CategoryController;
 use App\Http\Controllers\Dashboard\ProductController;
 use App\Http\Controllers\Dashboard\ClientController;
+use App\Http\Controllers\Dashboard\OrderController;
 
 
 Route::group(
@@ -52,6 +53,18 @@ Route::group(
                 Route::post('update/{id}', [ClientController::class,'update'])->name('update');
             });
             //end of clients routes
+
+            //clients orders routes
+            Route::prefix('clients/orders')->name('clients.orders.')->group(function(){
+                Route::get('/', [OrderController::class,'index'])->name('index');
+                Route::get('edit/{id}', [OrderController::class,'edit'])->name('edit');
+                Route::get('create/{id}', [OrderController::class,'create'])->name('create');
+                Route::post('delete/{id}', [OrderController::class,'destroy'])->name('delete');
+                Route::post('store', [OrderController::class,'store'])->name('store');
+                Route::post('update/{id}', [OrderController::class,'update'])->name('update');
+            });
+            //end of clients orders routes
+
 
 
             //users routes
