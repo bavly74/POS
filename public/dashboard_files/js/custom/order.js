@@ -10,12 +10,13 @@ $(document).ready(function () {
         var table = `
                 <tr>
                     <td>${name}</td>
-                    <td><input type="number" min="1"  value="1"/> </td>
-                    <td>${price}</td>
+                    <td><input class="product-quantity" type="number" min="1"  value="1" data-price="${price}"/> </td>
+                    <td class="product-price">${price}</td>
                     <td><button class="btn btn-danger remove-btn" data-id="${id}"><span class="fa fa-trash"></span></button></td>
                 </tr>
         ` ;
         $('.order-list').append(table);
+        calculateTotal()
     });
 
     $('body').on('click','.disabled',function (e){
@@ -31,78 +32,26 @@ $(document).ready(function () {
     });
 
 
-
-
-
-
-
-
-
-    //change product quantity
-    $('body').on('keyup change', '.product-quantity', function() {
-
-        var quantity = Number($(this).val()); //2
-        var unitPrice = parseFloat($(this).data('price').replace(/,/g, '')); //150
-        console.log(unitPrice);
-        $(this).closest('tr').find('.product-price').html($.number(quantity * unitPrice, 2));
+    $('body').on('keyup change','.product-quantity',function (){
+        var quantity=$(this).val();
+        var unitePrice =$(this).data('price');
+        $(this).closest('tr').find('.product-price').html(quantity * unitePrice);
         calculateTotal();
 
-    });//end of product quantity change
+    })
 
-    //list all order products
-    $('.order-products').on('click', function(e) {
 
-        e.preventDefault();
 
-        $('#loading').css('display', 'flex');
+    function calculateTotal(){
+        var price = 0;
+        $('.order-list .product-price').each(function (index){
+            price+=parseInt($(this).html());
+        });
+        $('.total-price').html(price)
+    }
 
-        var url = $(this).data('url');
-        var method = $(this).data('method');
-        $.ajax({
-            url: url,
-            method: method,
-            success: function(data) {
-
-                $('#loading').css('display', 'none');
-                $('#order-product-list').empty();
-                $('#order-product-list').append(data);
-
-            }
-        })
-
-    });//end of order products click
-
-    //print order
-    $(document).on('click', '.print-btn', function() {
-
-        $('#print-area').printThis();
-
-    });//end of click function
 
 });//end of document ready
 
 //calculate the total
-function calculateTotal() {
 
-    var price = 0;
-
-    $('.order-list .product-price').each(function(index) {
-
-        price += parseFloat($(this).html().replace(/,/g, ''));
-
-    });//end of product price
-
-    $('.total-price').html($.number(price, 2));
-
-    //check if price > 0
-    if (price > 0) {
-
-        $('#add-order-form-btn').removeClass('disabled')
-
-    } else {
-
-        $('#add-order-form-btn').addClass('disabled')
-
-    }//end of else
-
-}//end of calculate total
