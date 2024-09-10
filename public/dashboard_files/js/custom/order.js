@@ -67,7 +67,12 @@ $(document).ready(function () {
 
         })
 
+    });
 
+
+    $('body').on('click','.print-btn',function (e){
+        e.preventDefault()
+       $('#print-area').printThis();
     });
 
 
