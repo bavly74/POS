@@ -67,8 +67,8 @@
                                 <tr>
                                     <td>{{ $index + 1 }}</td>
                                     <td>{{ $client->name }}</td>
-                                    <td>{{ implode ('-', array_filter($client->phone)) }}</td>
-                                    <td>{{ implode ('-', array_filter($client->address)) }}</td>
+                                    <td>{{is_array($client->phone) ? implode ('-', array_filter($client->phone)) :$client->phone}}</td>
+                                    <td>{{is_array($client->address) ? implode ('-', array_filter($client->address)) :$client->address}}</td>
 
                                     <td>
                                             @if(Auth::user()->hasPermission('clients_update'))

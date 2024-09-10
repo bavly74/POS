@@ -108,9 +108,9 @@
 
                         <div class="box-body">
 
-{{--                            <form action="{{ route('dashboard.clients.orders.store', $client->id) }}" method="post">--}}
+                            <form action="{{ route('dashboard.clients.orders.store', $client->id) }}" method="post">
 
-{{--                                {{ csrf_field() }}--}}
+                                {{ csrf_field() }}
 {{--                                {{ method_field('post') }}--}}
 
                                 @include('partials._errors')

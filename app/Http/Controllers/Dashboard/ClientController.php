@@ -21,6 +21,7 @@ class ClientController extends Controller
                 ->orWhere('address','like','%'.$request->search.'%')
                 ;
         })->paginate(5);
+//        return $clients;
         return view('dashboard.clients.index',compact('clients'));
 
     }

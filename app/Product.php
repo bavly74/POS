@@ -32,4 +32,9 @@ class Product extends Model
         return number_format($profit_percent, 2);
 
     }
+
+
+    public function orders(){
+        return $this->belongsToMany(Order::class,'product_order');
+    }
 }
