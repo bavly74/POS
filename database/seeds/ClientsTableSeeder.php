@@ -16,6 +16,8 @@ class ClientsTableSeeder extends Seeder
             \App\Client::create([
                 'name' => $client,
                 'phone' => '0123456789',
+                'email'=>'bavly.eskander74@gmail.com',
+
                 'address'=>'address'
             ]);
         }

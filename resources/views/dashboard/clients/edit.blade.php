@@ -58,6 +58,7 @@
                             <input type="text" name="name" class="form-control" value="{{ $client->name }}">
                         </div>
 
+
                         @foreach($client->phone as $i=>$phone)
                             <div id="phoneContainer" class="form-group">
                                 <label>@lang('site.phone') - {{$i+1}} </label>

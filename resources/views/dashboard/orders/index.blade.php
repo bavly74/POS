@@ -74,7 +74,7 @@
                                                     @lang('site.show')
                                                 </button>
                                                 @if (auth()->user()->hasPermission('orders_update'))
-                                                    <a href="#" class="btn btn-warning btn-sm"><i class="fa fa-pencil"></i> @lang('site.edit')</a>
+                                                    <a href="{{route('dashboard.clients.orders.edit',['id'=>$order->id , 'clientId'=>$order->client->id ])}}" class="btn btn-warning btn-sm"><i class="fa fa-pencil"></i> @lang('site.edit')</a>
                                                 @else
                                                     <a href="#" disabled class="btn btn-warning btn-sm"><i class="fa fa-edit"></i> @lang('site.edit')</a>
                                                 @endif
@@ -138,6 +138,7 @@
                         </div><!-- end of box body -->
 
                     </div><!-- end of box -->
+
 
                 </div><!-- end of col -->
 

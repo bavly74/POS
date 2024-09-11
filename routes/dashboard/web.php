@@ -58,22 +58,22 @@ Route::group(
             //clients orders routes
             Route::prefix('clients/orders')->name('clients.orders.')->group(function(){
                 Route::get('/', [OrderController::class,'index'])->name('index');
-//                Route::get('edit/{id}', [OrderController::class,'edit'])->name('edit');
+                Route::get('edit/{id}/{clientId}', [OrderController::class,'edit'])->name('edit');
                 Route::get('create/{id}', [OrderController::class,'create'])->name('create');
 //                Route::post('delete/{id}', [OrderController::class,'destroy'])->name('delete');
                 Route::post('store/{id}', [OrderController::class,'store'])->name('store');
-//                Route::post('update/{id}', [OrderController::class,'update'])->name('update');
+                Route::post('update/{orderId}/{clientId}', [OrderController::class,'update'])->name('update');
             });
             //end of clients orders routes
 
 
-            //clients orders routes
+            // orders routes
             Route::prefix('orders')->name('orders.')->group(function(){
                 Route::get('/', [OrderController::class,'index'])->name('index');
                 Route::get('/orders/{id}/products', [OrderController::class,'getProductsPerOrder'])->name('products');
                 Route::post('delete/{id}', [OrderController::class,'delete'])->name('delete');
             });
-            //end of clients orders routes
+            //end of orders routes
 
 
             //users routes

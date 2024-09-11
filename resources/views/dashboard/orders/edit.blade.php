@@ -11,96 +11,202 @@
             <ol class="breadcrumb">
                 <li><a href="{{ route('dashboard.index') }}"><i class="fa fa-dashboard"></i> @lang('site.dashboard')</a></li>
                 <li><a href="{{ route('dashboard.users.index') }}"> @lang('site.users')</a></li>
-                <li class="active">@lang('site.add')</li>
+                <li class="active">@lang('site.edit')</li>
             </ol>
         </section>
 
         <section class="content">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="box box-primary">
 
-            <div class="box box-primary">
+                        <div class="box-header">
+                            <h3 class="box-title">@lang('site.add')</h3>
+                        </div><!-- end of box header -->
 
-                <div class="box-header">
-                    <h3 class="box-title">@lang('site.add')</h3>
-                </div><!-- end of box header -->
+                        <div class="box-body">
 
-                <div class="box-body">
+                            @include('partials._errors')
 
-                    @include('partials._errors')
+                            @foreach ($categories as $category)
 
-                    <form action="{{ route('dashboard.users.update', $user->id) }}" method="post" enctype="multipart/form-data">
+                                <div class="panel-group">
 
-                        {{ csrf_field() }}
-                        {{ method_field('post') }}
+                                    <div class="panel panel-info">
 
-                        <div class="form-group">
-                            <label>@lang('site.first_name')</label>
-                            <input type="text" name="first_name" class="form-control" value="{{ $user->first_name }}">
-                        </div>
-
-                        <div class="form-group">
-                            <label>@lang('site.last_name')</label>
-                            <input type="text" name="last_name" class="form-control" value="{{  $user->last_name }}">
-                        </div>
-
-                        <div class="form-group">
-                            <label>@lang('site.email')</label>
-                            <input type="email" name="email" class="form-control" value="{{ $user->email }}">
-                        </div>
-
-                        <div class="form-group">
-                            <label>@lang('site.image')</label>
-                            <input type="file" name="image" class="form-control">
-                        </div>
-
-                        <div class="form-group">
-                            <img src="{{ asset('uploads/users/'.$user->image) }}" style="width: 200px;height: 200px" class="form-control image-preview" alt="img">
-                        </div>
-
-
-                        <div class="form-group">
-                            <label>@lang('site.permissions')</label>
-                            <div class="nav-tabs-custom">
-
-                                @php
-                                    $models = ['users', 'categories', 'products', 'clients', 'orders'];
-                                    $maps = ['create', 'read', 'update', 'delete'];
-                                @endphp
-
-                                <ul class="nav nav-tabs">
-                                    @foreach ($models as $index=>$model)
-                                        <li class="{{ $index == 0 ? 'active' : '' }}"><a href="#{{ $model }}" data-toggle="tab">@lang('site.' . $model)</a></li>
-                                    @endforeach
-                                </ul>
-
-                                <div class="tab-content">
-
-                                    @foreach ($models as $index=>$model)
-
-                                        <div class="tab-pane {{ $index == 0 ? 'active' : '' }}" id="{{ $model }}">
-
-                                            @foreach ($maps as $map)
-                                                <label><input type="checkbox" {{$user->hasPermission($model . '_' . $map)?'checked':''}} name="permissions[]" value="{{ $model . '_' . $map }}"> @lang('site.' . $map)</label>
-                                            @endforeach
-
+                                        <div class="panel-heading">
+                                            <h4 class="panel-title">
+                                                <a data-toggle="collapse" href="#{{ str_replace(' ', '-', $category->name) }}">{{ $category->name }}</a>
+                                            </h4>
                                         </div>
 
+                                        <div id="{{ str_replace(' ', '-', $category->name) }}" class="panel-collapse collapse">
+
+                                            <div class="panel-body">
+
+                                                @if ($category->products->count() > 0)
+
+                                                    <table class="table table-hover">
+                                                        <tr>
+                                                            <th>@lang('site.name')</th>
+                                                            <th>@lang('site.stock')</th>
+                                                            <th>@lang('site.price')</th>
+                                                            <th>@lang('site.add')</th>
+                                                        </tr>
+
+                                                        @foreach ($category->products as $product)
+                                                            <tr>
+                                                                <td>{{ $product->name }}</td>
+                                                                <td>{{ $product->stock }}</td>
+                                                                <td>{{ number_format($product->sale_price, 2) }}</td>
+                                                                <td>
+                                                                    <a href=""
+                                                                       id="product-{{ $product->id }}"
+                                                                       data-name="{{ $product->name }}"
+                                                                       data-id="{{ $product->id }}"
+                                                                       data-price="{{ $product->sale_price }}"
+                                                                       class=" {{in_array($product->id , $order->products->pluck('id')->toArray()) ? 'btn-default disabled ' :'btn btn-success add-product-btn'  }}  btn-sm ">
+                                                                        <i class="fa fa-plus"></i>
+                                                                    </a>
+                                                                </td>
+                                                            </tr>
+                                                        @endforeach
+
+                                                    </table><!-- end of table -->
+
+                                                @else
+                                                    <h5>@lang('site.no_records')</h5>
+                                                @endif
+
+                                            </div><!-- end of panel body -->
+
+                                        </div><!-- end of panel collapse -->
+
+                                    </div><!-- end of panel primary -->
+
+                                </div><!-- end of panel group -->
+
+                            @endforeach
+
+
+
+                        </div><!-- end of box body -->
+
+                    </div><!-- end of box -->
+                </div><!-- end of col -->
+
+
+                <div class="col-md-6">
+
+                    <div class="box box-primary">
+
+                        <div class="box-header">
+
+                            <h3 class="box-title">@lang('site.orders')</h3>
+
+                        </div><!-- end of box header -->
+
+                        <div class="box-body">
+
+                            <form action="{{ route('dashboard.clients.orders.update', ['orderId'=>$id ,'clientId'=> $clientId] ) }}" method="post">
+
+                                {{ csrf_field() }}
+{{--                                --}}{{--{{ method_field('post') }}--}}
+
+                                @include('partials._errors')
+
+                                <table class="table table-hover">
+                                    <thead>
+                                    <tr>
+                                        <th>@lang('site.product')</th>
+                                        <th>@lang('site.quantity')</th>
+                                        <th>@lang('site.price')</th>
+                                    </tr>
+                                    </thead>
+
+                                    <tbody class="order-list">
+                                    @foreach($order->products as $product)
+                                        <tr>
+                                            <td>{{$product->name}}</td>
+                                            <td><input class="product-quantity" type="number" min="1" name="products[{{$product->id}}][quantity]" value="{{$product->pivot->quantity}}" data-price="{{$product->sale_price}}"/> </td>
+                                            <td class="product-price">{{number_format($product->sale_price * $product->pivot->quantity ,2)}}</td>
+                                            <td><button class="btn btn-danger remove-btn" data-id="{{$product->id}}"><span class="fa fa-trash"></span></button></td>
+                                        </tr>
                                     @endforeach
 
-                                </div><!-- end of tab content -->
 
-                            </div><!-- end of nav tabs -->
+                                    </tbody>
 
-                        </div>
+                                </table><!-- end of table -->
 
-                        <div class="form-group">
-                            <button type="submit" class="btn btn-primary"><i class="fa fa-plus"></i> @lang('site.add')</button>
-                        </div>
+                                <h4>@lang('site.total') : <span class="total-price">{{number_format($order->total_price,2)}}</span></h4>
 
-                    </form><!-- end of form -->
+                                <button class="btn btn-primary btn-block " id="add-order-form-btn"><i class="fa fa-plus"></i> @lang('site.edit_order')</button>
 
-                </div><!-- end of box body -->
+                            </form>
 
-            </div><!-- end of box -->
+                        </div><!-- end of box body -->
+
+                    </div><!-- end of box -->
+
+                                        @if ( $client->orders->count() > 0)
+
+                                            <div class="box box-primary">
+
+                                                <div class="box-header">
+
+                                                    <h3 class="box-title" style="margin-bottom: 10px">@lang('site.previous_orders')
+                                                        <small>{{ $orders->count() }}</small>
+                                                    </h3>
+
+                                                </div><!-- end of box header -->
+
+                                                <div class="box-body">
+
+                                                    @foreach ($orders as $order)
+
+                                                        <div class="panel-group">
+
+                                                            <div class="panel panel-success">
+
+                                                                <div class="panel-heading">
+                                                                    <h4 class="panel-title">
+                                                                        <a data-toggle="collapse" href="#{{ $order->created_at->format('d-m-Y-s') }}">{{ $order->created_at->toFormattedDateString() }}</a>
+                                                                    </h4>
+                                                                </div>
+
+                                                                <div id="{{ $order->created_at->format('d-m-Y-s') }}" class="panel-collapse collapse">
+
+                                                                    <div class="panel-body">
+
+                                                                        <ul class="list-group">
+                                                                            @foreach ($order->products as $product)
+                                                                                <li class="list-group-item">{{ $product->name }}</li>
+                                                                            @endforeach
+                                                                        </ul>
+
+                                                                    </div><!-- end of panel body -->
+
+                                                                </div><!-- end of panel collapse -->
+
+                                                            </div><!-- end of panel primary -->
+
+                                                        </div><!-- end of panel group -->
+
+                                                    @endforeach
+
+                                                    {{ $orders->links() }}
+
+                                                </div><!-- end of box body -->
+
+                                            </div><!-- end of box -->
+
+                                        @endif
+
+                </div><!-- end of col -->
+
+            </div><!-- end of row -->
+
 
         </section><!-- end of content -->
 

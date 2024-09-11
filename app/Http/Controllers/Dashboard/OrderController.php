@@ -1,7 +1,8 @@
 <?php
 
 namespace App\Http\Controllers\Dashboard;
-
+use App\Mail\ExampleMail;
+use Illuminate\Support\Facades\Mail;
 use App\Category;
 use App\Http\Controllers\Controller;
 use App\Client;
@@ -19,15 +20,56 @@ class OrderController extends Controller
     }//end of index
 
     public function create($id){
-        $client=Client::find($id);
         $categories=Category::with('products')->get();
-        return view('dashboard.orders.create',compact('categories','client'));
+        $client=Client::find($id);
+        $orders= $client->orders()->with('products')->paginate(5);
+        return view('dashboard.orders.create',compact('categories','client','orders'));
     }//end of create
 
     public function store(Request $request,$id){
 
         $client=Client::find($id);
+        $this->attachOrder($request,$client);
+        $data = [
+            'title' => 'Hello World',
+            'message' => 'This is a test email.',
+        ];
+        Mail::to($client->email)->send(new ExampleMail($data));
 
+
+        return redirect()->route('dashboard.orders.index');
+
+    }//end of store
+
+    public function getProductsPerOrder($id){
+        $order=Order::find($id);
+        $products = $order->products;
+        return view('dashboard.orders._products',compact('products','order'));
+    }//end of get products
+
+    public function edit ($id, $clientId)
+    {
+        $order=Order::with('client')->find($id);
+        $client=Client::find($clientId);
+        $orders=$client->orders()->with('products')->paginate(5);
+        $categories=Category::with('products')->get();
+
+        return view('dashboard.orders.edit',compact('id','categories','clientId','orders','client','order'));
+
+    }//end of edit
+
+
+    public function update(Request $request, $orderId , $clientId){
+     $client=Client::find($clientId);
+
+     $this->delete($orderId);
+     $this->attachOrder($request,$client);
+
+     return redirect()->route('dashboard.orders.index')->with('success','Order updated successfully');
+    }//end of update
+
+    private function attachOrder($request,$client)
+    {
         $order=$client->orders()->create([]);
 
         $order->products()->attach($request->products);
@@ -50,15 +92,8 @@ class OrderController extends Controller
             'total_price'=>$total_price,
         ]);
 
-    return redirect()->route('dashboard.orders.index');
+    }//end of attach
 
-    }//end of store
-
-    public function getProductsPerOrder($id){
-        $order=Order::find($id);
-        $products = $order->products;
-        return view('dashboard.orders._products',compact('products','order'));
-    }//end of get products
 
     public function delete($id)
     {
